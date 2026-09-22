@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Table Talk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mist: #EDF3F2;
+    --ink: #10303A;
+    --ink-soft: #456670;
+    --focus: #0B62A4;
+    --font: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--mist);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 2.25rem);
+  }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+  .back:hover { text-decoration: underline; }
+  .back:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  header h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  header p {
+    margin: 0.5rem 0 0;
+    max-width: 34rem;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: clamp(0.6rem, 1.6vw, 1.1rem);
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Colours cycle automatically, so new tiles need no extra styling. */
+  .tiles li:nth-child(7n+1) { --c: #A8D5CB; }
+  .tiles li:nth-child(7n+2) { --c: #F2D9A6; }
+  .tiles li:nth-child(7n+3) { --c: #F4B5A0; }
+  .tiles li:nth-child(7n+4) { --c: #C9C3EA; }
+  .tiles li:nth-child(7n+5) { --c: #A9CCEB; }
+  .tiles li:nth-child(7n+6) { --c: #F0C2D3; }
+  .tiles li:nth-child(7n+7) { --c: #C7DE9F; }
+
+  .tiles a {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    min-height: 13rem;
+    height: 100%;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    border-radius: 0.9rem;
+    background: var(--c);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .tiles a:hover { filter: brightness(0.96); }
+  .tiles a:focus-visible { outline: 4px solid var(--focus); outline-offset: 3px; }
+
+  .title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  .about {
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <a class="back" href="https://coastoflight.github.io/">&larr; COAST of LIGHT</a>
+
+  <header>
+    <h1>Table Talk</h1>
+    <p>Conversation starters for around the table.</p>
+  </header>
+
+  <!--
+    To add a page: copy one <li> block, then change the href, title and description.
+    Tile colours cycle automatically.
+  -->
+  <ul class="tiles">
+    <li>
+      <a href="https://coastoflight.github.io/question-prompts/">
+        <span class="title">Table Talk 1</span>
+        <span class="about">Questions</span>
+      </a>
+    </li>
+    <li>
+      <a href="https://coastoflight.github.io/table-talk/complete-the-sentence-60.html">
+        <span class="title">Table Talk 2</span>
+        <span class="about">Complete the sentence</span>
+      </a>
+    </li>
+    <li>
+      <a href="https://coastoflight.github.io/philosophy-questions/">
+        <span class="title">Table Talk 3</span>
+        <span class="about">Philosophical Questions</span>
+      </a>
+    </li>
+  </ul>
+</main>
+</body>
+</html>
