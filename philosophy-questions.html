@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Philosophy Questions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    background: #A8D5CB;
+    overflow: hidden;
+  }
+
+  .back {
+    position: fixed;
+    top: max(20px, env(safe-area-inset-top, 0px));
+    left: 20px;
+    z-index: 2;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #10303A;
+    opacity: 0.7;
+    text-decoration: none;
+  }
+  .back:hover { opacity: 1; text-decoration: underline; }
+
+  button.stage {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    background: #A8D5CB;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    margin: 0;
+    padding: 8vw 7vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  button.stage:focus {
+    outline: none;
+  }
+
+  .sentence {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size: clamp(28px, 6vw, 68px);
+    line-height: 1.25;
+    color: #10303A;
+    letter-spacing: -0.01em;
+    max-width: 900px;
+    transition: opacity 500ms ease, filter 500ms ease;
+    opacity: 1;
+    filter: blur(0px);
+  }
+
+  .sentence.fading {
+    opacity: 0;
+    filter: blur(6px);
+  }
+
+  .hint {
+    position: fixed;
+    bottom: 28px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #10303A;
+    opacity: 0.45;
+    transition: opacity 1.2s ease;
+    pointer-events: none;
+  }
+
+  .hint.hidden { opacity: 0; }
+
+  .count {
+    position: fixed;
+    top: 28px;
+    right: 32px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #10303A;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="https://coastoflight.github.io/">&larr; COAST of LIGHT</a>
+
+<button class="stage" id="stage" aria-label="Show another question">
+  <div class="sentence" id="sentence"></div>
+</button>
+
+<div class="hint" id="hint">tap for another</div>
+<div class="count" id="count"></div>
+
+<script>
+  const strategies = [
+"Is time real?","Is time an object?","Is time infinite?","Is time alive?","Is time wrong?","Is time beautiful?","Is time an illusion?","Is time invisible?","Is time everywhere?","Is time nowhere?","Is time useful?","Is time good?","Is time inside me?","Is time powerless?",
+"Is freedom real?","Is freedom an object?","Is freedom infinite?","Is freedom alive?","Is freedom wrong?","Is freedom beautiful?","Is freedom an illusion?","Is freedom invisible?","Is freedom everywhere?","Is freedom nowhere?","Is freedom useful?","Is freedom good?","Is freedom inside me?","Is freedom powerless?",
+"Is your mind real?","Is your mind an object?","Is your mind infinite?","Is your mind alive?","Is your mind wrong?","Is your mind beautiful?","Is your mind an illusion?","Is your mind invisible?","Is your mind everywhere?","Is your mind nowhere?","Is your mind useful?","Is your mind good?","Is your mind inside me?","Is your mind powerless?",
+"Is your body real?","Is your body an object?","Is your body infinite?","Is your body alive?","Is your body wrong?","Is your body beautiful?","Is your body an illusion?","Is your body invisible?","Is your body everywhere?","Is your body nowhere?","Is your body useful?","Is your body good?","Is your body inside me?","Is your body powerless?",
+"Is light real?","Is light an object?","Is light infinite?","Is light alive?","Is light wrong?","Is light beautiful?","Is light an illusion?","Is light invisible?","Is light everywhere?","Is light nowhere?","Is light useful?","Is light good?","Is light inside me?","Is light powerless?",
+"Is reality real?","Is reality an object?","Is reality infinite?","Is reality alive?","Is reality wrong?","Is reality beautiful?","Is reality an illusion?","Is reality invisible?","Is reality everywhere?","Is reality nowhere?","Is reality useful?","Is reality good?","Is reality inside me?","Is reality powerless?",
+"Are dreams real?","Are dreams an object?","Are dreams infinite?","Are dreams alive?","Are dreams wrong?","Are dreams beautiful?","Are dreams an illusion?","Are dreams invisible?","Are dreams everywhere?","Are dreams nowhere?","Are dreams useful?","Are dreams good?","Are dreams inside me?","Are dreams powerless?",
+"Are shadows real?","Are shadows an object?","Are shadows infinite?","Are shadows alive?","Are shadows wrong?","Are shadows beautiful?","Are shadows an illusion?","Are shadows invisible?","Are shadows everywhere?","Are shadows nowhere?","Are shadows useful?","Are shadows good?","Are shadows inside me?","Are shadows powerless?",
+"Is thinking real?","Is thinking an object?","Is thinking infinite?","Is thinking alive?","Is thinking wrong?","Is thinking beautiful?","Is thinking an illusion?","Is thinking invisible?","Is thinking everywhere?","Is thinking nowhere?","Is thinking useful?","Is thinking good?","Is thinking inside me?","Is thinking powerless?",
+"Is the future real?","Is the future an object?","Is the future infinite?","Is the future alive?","Is the future wrong?","Is the future beautiful?","Is the future an illusion?","Is the future invisible?","Is the future everywhere?","Is the future nowhere?","Is the future useful?","Is the future good?","Is the future inside me?","Is the future powerless?",
+"Is the past real?","Is the past an object?","Is the past infinite?","Is the past alive?","Is the past wrong?","Is the past beautiful?","Is the past an illusion?","Is the past invisible?","Is the past everywhere?","Is the past nowhere?","Is the past useful?","Is the past good?","Is the past inside me?","Is the past powerless?",
+"Is music real?","Is music an object?","Is music infinite?","Is music alive?","Is music wrong?","Is music beautiful?","Is music an illusion?","Is music invisible?","Is music everywhere?","Is music nowhere?","Is music useful?","Is music good?","Is music inside me?","Is music powerless?",
+"Is sound real?","Is sound an object?","Is sound infinite?","Is sound alive?","Is sound wrong?","Is sound beautiful?","Is sound an illusion?","Is sound invisible?","Is sound everywhere?","Is sound nowhere?","Is sound useful?","Is sound good?","Is sound inside me?","Is sound powerless?",
+"Is art real?","Is art an object?","Is art infinite?","Is art alive?","Is art wrong?","Is art beautiful?","Is art an illusion?","Is art invisible?","Is art everywhere?","Is art nowhere?","Is art useful?","Is art good?","Is art inside me?","Is art powerless?",
+"Is voice real?","Is voice an object?","Is voice infinite?","Is voice alive?","Is voice wrong?","Is voice beautiful?","Is voice an illusion?","Is voice invisible?","Is voice everywhere?","Is voice nowhere?","Is voice useful?","Is voice good?","Is voice inside me?","Is voice powerless?",
+"Are smells real?","Are smells an object?","Are smells infinite?","Are smells alive?","Are smells wrong?","Are smells beautiful?","Are smells an illusion?","Are smells invisible?","Are smells everywhere?","Are smells nowhere?","Are smells useful?","Are smells good?","Are smells inside me?","Are smells powerless?",
+"Is motion real?","Is motion an object?","Is motion infinite?","Is motion alive?","Is motion wrong?","Is motion beautiful?","Is motion an illusion?","Is motion invisible?","Is motion everywhere?","Is motion nowhere?","Is motion useful?","Is motion good?","Is motion inside me?","Is motion powerless?",
+"Is gravity real?","Is gravity an object?","Is gravity infinite?","Is gravity alive?","Is gravity wrong?","Is gravity beautiful?","Is gravity an illusion?","Is gravity invisible?","Is gravity everywhere?","Is gravity nowhere?","Is gravity useful?","Is gravity good?","Is gravity inside me?","Is gravity powerless?",
+"Is property real?","Is property an object?","Is property infinite?","Is property alive?","Is property wrong?","Is property beautiful?","Is property an illusion?","Is property invisible?","Is property everywhere?","Is property nowhere?","Is property useful?","Is property good?","Is property inside me?","Is property powerless?",
+"Is knowledge real?","Is knowledge an object?","Is knowledge infinite?","Is knowledge alive?","Is knowledge wrong?","Is knowledge beautiful?","Is knowledge an illusion?","Is knowledge invisible?","Is knowledge everywhere?","Is knowledge nowhere?","Is knowledge useful?","Is knowledge good?","Is knowledge inside me?","Is knowledge powerless?",
+"Is intelligence real?","Is intelligence an object?","Is intelligence infinite?","Is intelligence alive?","Is intelligence wrong?","Is intelligence beautiful?","Is intelligence an illusion?","Is intelligence invisible?","Is intelligence everywhere?","Is intelligence nowhere?","Is intelligence useful?","Is intelligence good?","Is intelligence inside me?","Is intelligence powerless?",
+"Is wisdom real?","Is wisdom an object?","Is wisdom infinite?","Is wisdom alive?","Is wisdom wrong?","Is wisdom beautiful?","Is wisdom an illusion?","Is wisdom invisible?","Is wisdom everywhere?","Is wisdom nowhere?","Is wisdom useful?","Is wisdom good?","Is wisdom inside me?","Is wisdom powerless?",
+"Are friends real?","Are friends an object?","Are friends infinite?","Are friends alive?","Are friends wrong?","Are friends beautiful?","Are friends an illusion?","Are friends invisible?","Are friends everywhere?","Are friends nowhere?","Are friends useful?","Are friends good?","Are friends inside me?","Are friends powerless?",
+"Is beauty real?","Is beauty an object?","Is beauty infinite?","Is beauty alive?","Is beauty wrong?","Is beauty beautiful?","Is beauty an illusion?","Is beauty invisible?","Is beauty everywhere?","Is beauty nowhere?","Is beauty useful?","Is beauty good?","Is beauty inside me?","Is beauty powerless?",
+"Is love real?","Is love an object?","Is love infinite?","Is love alive?","Is love wrong?","Is love beautiful?","Is love an illusion?","Is love invisible?","Is love everywhere?","Is love nowhere?","Is love useful?","Is love good?","Is love inside me?","Is love powerless?",
+"Is happiness real?","Is happiness an object?","Is happiness infinite?","Is happiness alive?","Is happiness wrong?","Is happiness beautiful?","Is happiness an illusion?","Is happiness invisible?","Is happiness everywhere?","Is happiness nowhere?","Is happiness useful?","Is happiness good?","Is happiness inside me?","Is happiness powerless?",
+"Is education real?","Is education an object?","Is education infinite?","Is education alive?","Is education wrong?","Is education beautiful?","Is education an illusion?","Is education invisible?","Is education everywhere?","Is education nowhere?","Is education useful?","Is education good?","Is education inside me?","Is education powerless?",
+"Is the soul real?","Is the soul an object?","Is the soul infinite?","Is the soul alive?","Is the soul wrong?","Is the soul beautiful?","Is the soul an illusion?","Is the soul invisible?","Is the soul everywhere?","Is the soul nowhere?","Is the soul useful?","Is the soul good?","Is the soul inside me?","Is the soul powerless?",
+"Is life real?","Is life an object?","Is life infinite?","Is life alive?","Is life wrong?","Is life beautiful?","Is life an illusion?","Is life invisible?","Is life everywhere?","Is life nowhere?","Is life useful?","Is life good?","Is life inside me?","Is life powerless?",
+"Are thoughts real?","Are thoughts an object?","Are thoughts infinite?","Are thoughts alive?","Are thoughts wrong?","Are thoughts beautiful?","Are thoughts an illusion?","Are thoughts invisible?","Are thoughts everywhere?","Are thoughts nowhere?","Are thoughts useful?","Are thoughts good?","Are thoughts inside me?","Are thoughts powerless?",
+"Is sadness real?","Is sadness an object?","Is sadness infinite?","Is sadness alive?","Is sadness wrong?","Is sadness beautiful?","Is sadness an illusion?","Is sadness invisible?","Is sadness everywhere?","Is sadness nowhere?","Is sadness useful?","Is sadness good?","Is sadness inside me?","Is sadness powerless?",
+"Is truth real?","Is truth an object?","Is truth infinite?","Is truth alive?","Is truth wrong?","Is truth beautiful?","Is truth an illusion?","Is truth invisible?","Is truth everywhere?","Is truth nowhere?","Is truth useful?","Is truth good?","Is truth inside me?","Is truth powerless?",
+"Is pain real?","Is pain an object?","Is pain infinite?","Is pain alive?","Is pain wrong?","Is pain beautiful?","Is pain an illusion?","Is pain invisible?","Is pain everywhere?","Is pain nowhere?","Is pain useful?","Is pain good?","Is pain inside me?","Is pain powerless?",
+"Is pleasure real?","Is pleasure an object?","Is pleasure infinite?","Is pleasure alive?","Is pleasure wrong?","Is pleasure beautiful?","Is pleasure an illusion?","Is pleasure invisible?","Is pleasure everywhere?","Is pleasure nowhere?","Is pleasure useful?","Is pleasure good?","Is pleasure inside me?","Is pleasure powerless?",
+"Is power real?","Is power an object?","Is power infinite?","Is power alive?","Is power wrong?","Is power beautiful?","Is power an illusion?","Is power invisible?","Is power everywhere?","Is power nowhere?","Is power useful?","Is power good?","Is power inside me?","Is power powerless?",
+"Is silence real?","Is silence an object?","Is silence infinite?","Is silence alive?","Is silence wrong?","Is silence beautiful?","Is silence an illusion?","Is silence invisible?","Is silence everywhere?","Is silence nowhere?","Is silence useful?","Is silence good?","Is silence inside me?","Is silence powerless?",
+"Is darkness real?","Is darkness an object?","Is darkness infinite?","Is darkness alive?","Is darkness wrong?","Is darkness beautiful?","Is darkness an illusion?","Is darkness invisible?","Is darkness everywhere?","Is darkness nowhere?","Is darkness useful?","Is darkness good?","Is darkness inside me?","Is darkness powerless?",
+"Is colour real?","Is colour an object?","Is colour infinite?","Is colour alive?","Is colour wrong?","Is colour beautiful?","Is colour an illusion?","Is colour invisible?","Is colour everywhere?","Is colour nowhere?","Is colour useful?","Is colour good?","Is colour inside me?","Is colour powerless?",
+"Is language real?","Is language an object?","Is language infinite?","Is language alive?","Is language wrong?","Is language beautiful?","Is language an illusion?","Is language invisible?","Is language everywhere?","Is language nowhere?","Is language useful?","Is language good?","Is language inside me?","Is language powerless?",
+"Are words real?","Are words an object?","Are words infinite?","Are words alive?","Are words wrong?","Are words beautiful?","Are words an illusion?","Are words invisible?","Are words everywhere?","Are words nowhere?","Are words useful?","Are words good?","Are words inside me?","Are words powerless?",
+"Is death real?","Is death an object?","Is death infinite?","Is death alive?","Is death wrong?","Is death beautiful?","Is death an illusion?","Is death invisible?","Is death everywhere?","Is death nowhere?","Is death useful?","Is death good?","Is death inside me?","Is death powerless?",
+"Is chaos real?","Is chaos an object?","Is chaos infinite?","Is chaos alive?","Is chaos wrong?","Is chaos beautiful?","Is chaos an illusion?","Is chaos invisible?","Is chaos everywhere?","Is chaos nowhere?","Is chaos useful?","Is chaos good?","Is chaos inside me?","Is chaos powerless?",
+"Is murder real?","Is murder an object?","Is murder infinite?","Is murder alive?","Is murder wrong?","Is murder beautiful?","Is murder an illusion?","Is murder invisible?","Is murder everywhere?","Is murder nowhere?","Is murder useful?","Is murder good?","Is murder inside me?","Is murder powerless?",
+"Is insanity real?","Is insanity an object?","Is insanity infinite?","Is insanity alive?","Is insanity wrong?","Is insanity beautiful?","Is insanity an illusion?","Is insanity invisible?","Is insanity everywhere?","Is insanity nowhere?","Is insanity useful?","Is insanity good?","Is insanity inside me?","Is insanity powerless?",
+"Are humans real?","Are humans an object?","Are humans infinite?","Are humans alive?","Are humans wrong?","Are humans beautiful?","Are humans an illusion?","Are humans invisible?","Are humans everywhere?","Are humans nowhere?","Are humans useful?","Are humans good?","Are humans inside me?","Are humans powerless?",
+"Are animals real?","Are animals an object?","Are animals infinite?","Are animals alive?","Are animals wrong?","Are animals beautiful?","Are animals an illusion?","Are animals invisible?","Are animals everywhere?","Are animals nowhere?","Are animals useful?","Are animals good?","Are animals inside me?","Are animals powerless?",
+"Is confusion real?","Is confusion an object?","Is confusion infinite?","Is confusion alive?","Is confusion wrong?","Is confusion beautiful?","Is confusion an illusion?","Is confusion invisible?","Is confusion everywhere?","Is confusion nowhere?","Is confusion useful?","Is confusion good?","Is confusion inside me?","Is confusion powerless?",
+"Is God real?","Is God an object?","Is God infinite?","Is God alive?","Is God wrong?","Is God beautiful?","Is God an illusion?","Is God invisible?","Is God everywhere?","Is God nowhere?","Is God useful?","Is God good?","Is God inside me?","Is God powerless?",
+"Is slavery real?","Is slavery an object?","Is slavery infinite?","Is slavery alive?","Is slavery wrong?","Is slavery beautiful?","Is slavery an illusion?","Is slavery invisible?","Is slavery everywhere?","Is slavery nowhere?","Is slavery useful?","Is slavery good?","Is slavery inside me?","Is slavery powerless?",
+"Is nature real?","Is nature an object?","Is nature infinite?","Is nature alive?","Is nature wrong?","Is nature beautiful?","Is nature an illusion?","Is nature invisible?","Is nature everywhere?","Is nature nowhere?","Is nature useful?","Is nature good?","Is nature inside me?","Is nature powerless?",
+"Is the universe real?","Is the universe an object?","Is the universe infinite?","Is the universe alive?","Is the universe wrong?","Is the universe beautiful?","Is the universe an illusion?","Is the universe invisible?","Is the universe everywhere?","Is the universe nowhere?","Is the universe useful?","Is the universe good?","Is the universe inside me?","Is the universe powerless?",
+"Is authority real?","Is authority an object?","Is authority infinite?","Is authority alive?","Is authority wrong?","Is authority beautiful?","Is authority an illusion?","Is authority invisible?","Is authority everywhere?","Is authority nowhere?","Is authority useful?","Is authority good?","Is authority inside me?","Is authority powerless?",
+"Is the wind real?","Is the wind an object?","Is the wind infinite?","Is the wind alive?","Is the wind wrong?","Is the wind beautiful?","Is the wind an illusion?","Is the wind invisible?","Is the wind everywhere?","Is the wind nowhere?","Is the wind useful?","Is the wind good?","Is the wind inside me?","Is the wind powerless?",
+"Is existence real?","Is existence an object?","Is existence infinite?","Is existence alive?","Is existence wrong?","Is existence beautiful?","Is existence an illusion?","Is existence invisible?","Is existence everywhere?","Is existence nowhere?","Is existence useful?","Is existence good?","Is existence inside me?","Is existence powerless?",
+"Is war real?","Is war an object?","Is war infinite?","Is war alive?","Is war wrong?","Is war beautiful?","Is war an illusion?","Is war invisible?","Is war everywhere?","Is war nowhere?","Is war useful?","Is war good?","Is war inside me?","Is war powerless?",
+"Is peace real?","Is peace an object?","Is peace infinite?","Is peace alive?","Is peace wrong?","Is peace beautiful?","Is peace an illusion?","Is peace invisible?","Is peace everywhere?","Is peace nowhere?","Is peace useful?","Is peace good?","Is peace inside me?","Is peace powerless?",
+"Does time have a reason?","Does time exist?","Does time change?","Does time grow?","Does time decay?",
+"Does freedom have a reason?","Does freedom exist?","Does freedom change?","Does freedom grow?","Does freedom decay?",
+"Does your mind have a reason?","Does your mind exist?","Does your mind change?","Does your mind grow?","Does your mind decay?",
+"Does your body have a reason?","Does your body exist?","Does your body change?","Does your body grow?","Does your body decay?",
+"Does light have a reason?","Does light exist?","Does light change?","Does light grow?","Does light decay?",
+"Does reality have a reason?","Does reality exist?","Does reality change?","Does reality grow?","Does reality decay?",
+"Do dreams have a reason?","Do dreams exist?","Do dreams change?","Do dreams grow?","Do dreams decay?",
+"Do shadows have a reason?","Do shadows exist?","Do shadows change?","Do shadows grow?","Do shadows decay?",
+"Does thinking have a reason?","Does thinking exist?","Does thinking change?","Does thinking grow?","Does thinking decay?",
+"Does the future have a reason?","Does the future exist?","Does the future change?","Does the future grow?","Does the future decay?",
+"Does the past have a reason?","Does the past exist?","Does the past change?","Does the past grow?","Does the past decay?",
+"Does music have a reason?","Does music exist?","Does music change?","Does music grow?","Does music decay?",
+"Does sound have a reason?","Does sound exist?","Does sound change?","Does sound grow?","Does sound decay?",
+"Does art have a reason?","Does art exist?","Does art change?","Does art grow?","Does art decay?",
+"Does voice have a reason?","Does voice exist?","Does voice change?","Does voice grow?","Does voice decay?",
+"Do smells have a reason?","Do smells exist?","Do smells change?","Do smells grow?","Do smells decay?",
+"Does motion have a reason?","Does motion exist?","Does motion change?","Does motion grow?","Does motion decay?",
+"Does gravity have a reason?","Does gravity exist?","Does gravity change?","Does gravity grow?","Does gravity decay?",
+"Does property have a reason?","Does property exist?","Does property change?","Does property grow?","Does property decay?",
+"Does knowledge have a reason?","Does knowledge exist?","Does knowledge change?","Does knowledge grow?","Does knowledge decay?",
+"Does intelligence have a reason?","Does intelligence exist?","Does intelligence change?","Does intelligence grow?","Does intelligence decay?",
+"Does wisdom have a reason?","Does wisdom exist?","Does wisdom change?","Does wisdom grow?","Does wisdom decay?",
+"Do friends have a reason?","Do friends exist?","Do friends change?","Do friends grow?","Do friends decay?",
+"Does beauty have a reason?","Does beauty exist?","Does beauty change?","Does beauty grow?","Does beauty decay?",
+"Does love have a reason?","Does love exist?","Does love change?","Does love grow?","Does love decay?",
+"Does happiness have a reason?","Does happiness exist?","Does happiness change?","Does happiness grow?","Does happiness decay?",
+"Does education have a reason?","Does education exist?","Does education change?","Does education grow?","Does education decay?",
+"Does the soul have a reason?","Does the soul exist?","Does the soul change?","Does the soul grow?","Does the soul decay?",
+"Does life have a reason?","Does life exist?","Does life change?","Does life grow?","Does life decay?",
+"Do thoughts have a reason?","Do thoughts exist?","Do thoughts change?","Do thoughts grow?","Do thoughts decay?",
+"Does sadness have a reason?","Does sadness exist?","Does sadness change?","Does sadness grow?","Does sadness decay?",
+"Does truth have a reason?","Does truth exist?","Does truth change?","Does truth grow?","Does truth decay?",
+"Does pain have a reason?","Does pain exist?","Does pain change?","Does pain grow?","Does pain decay?",
+"Does pleasure have a reason?","Does pleasure exist?","Does pleasure change?","Does pleasure grow?","Does pleasure decay?",
+"Does power have a reason?","Does power exist?","Does power change?","Does power grow?","Does power decay?",
+"Does silence have a reason?","Does silence exist?","Does silence change?","Does silence grow?","Does silence decay?",
+"Does darkness have a reason?","Does darkness exist?","Does darkness change?","Does darkness grow?","Does darkness decay?",
+"Does colour have a reason?","Does colour exist?","Does colour change?","Does colour grow?","Does colour decay?",
+"Does language have a reason?","Does language exist?","Does language change?","Does language grow?","Does language decay?",
+"Do words have a reason?","Do words exist?","Do words change?","Do words grow?","Do words decay?",
+"Does death have a reason?","Does death exist?","Does death change?","Does death grow?","Does death decay?",
+"Does chaos have a reason?","Does chaos exist?","Does chaos change?","Does chaos grow?","Does chaos decay?",
+"Does murder have a reason?","Does murder exist?","Does murder change?","Does murder grow?","Does murder decay?",
+"Does insanity have a reason?","Does insanity exist?","Does insanity change?","Does insanity grow?","Does insanity decay?",
+"Do humans have a reason?","Do humans exist?","Do humans change?","Do humans grow?","Do humans decay?",
+"Do animals have a reason?","Do animals exist?","Do animals change?","Do animals grow?","Do animals decay?",
+"Do confusion have a reason?","Do confusion exist?","Do confusion change?","Do confusion grow?","Do confusion decay?",
+"Does God have a reason?","Does God exist?","Does God change?","Does God grow?","Does God decay?",
+"Does slavery have a reason?","Does slavery exist?","Does slavery change?","Does slavery grow?","Does slavery decay?",
+"Does nature have a reason?","Does nature exist?","Does nature change?","Does nature grow?","Does nature decay?",
+"Does the universe have a reason?","Does the universe exist?","Does the universe change?","Does the universe grow?","Does the universe decay?",
+"Does authority have a reason?","Does authority exist?","Does authority change?","Does authority grow?","Does authority decay?",
+"Does the wind have a reason?","Does the wind exist?","Does the wind change?","Does the wind grow?","Does the wind decay?",
+"Does existence have a reason?","Does existence exist?","Does existence change?","Does existence grow?","Does existence decay?",
+"Does war have a reason?","Does war exist?","Does war change?","Does war grow?","Does war decay?",
+"Does peace have a reason?","Does peace exist?","Does peace change?","Does peace grow?","Does peace decay?",
+"Can you control time?","Can you control freedom?","Can you control my mind?","Can you control my body?","Can you control light?","Can you control reality?","Can you control dreams?","Can you control shadows?","Can you control thinking?","Can you control the future?","Can you control the past?","Can you control music?","Can you control sound?","Can you control art?","Can you control voice?","Can you control smells?","Can you control motion?","Can you control gravity?","Can you control property?","Can you control knowledge?","Can you control intelligence?","Can you control wisdom?","Can you control friends?","Can you control beauty?","Can you control love?","Can you control happiness?","Can you control education?","Can you control the soul?","Can you control life?","Can you control thoughts?","Can you control sadness?","Can you control truth?","Can you control pain?","Can you control pleasure?","Can you control power?","Can you control silence?","Can you control darkness?","Can you control colour?","Can you control language?","Can you control words?","Can you control death?","Can you control chaos?","Can you control murder?","Can you control insanity?","Can you control humans?","Can you control animals?","Can you control confusion?","Can you control God?","Can you control slavery?","Can you control nature?","Can you control the universe?","Can you control authority?","Can you control the wind?","Can you control existence?","Can you control war?","Can you control peace?",
+"Can you create time?","Can you create freedom?","Can you create my mind?","Can you create my body?","Can you create light?","Can you create reality?","Can you create dreams?","Can you create shadows?","Can you create thinking?","Can you create the future?","Can you create the past?","Can you create music?","Can you create sound?","Can you create art?","Can you create voice?","Can you create smells?","Can you create motion?","Can you create gravity?","Can you create property?","Can you create knowledge?","Can you create intelligence?","Can you create wisdom?","Can you create friends?","Can you create beauty?","Can you create love?","Can you create happiness?","Can you create education?","Can you create the soul?","Can you create life?","Can you create thoughts?","Can you create sadness?","Can you create truth?","Can you create pain?","Can you create pleasure?","Can you create power?","Can you create silence?","Can you create darkness?","Can you create colour?","Can you create language?","Can you create words?","Can you create death?","Can you create chaos?","Can you create murder?","Can you create insanity?","Can you create humans?","Can you create animals?","Can you create confusion?","Can you create God?","Can you create slavery?","Can you create nature?","Can you create the universe?","Can you create authority?","Can you create the wind?","Can you create existence?","Can you create war?","Can you create peace?",
+"Can you annihilate time?","Can you annihilate freedom?","Can you annihilate my mind?","Can you annihilate my body?","Can you annihilate light?","Can you annihilate reality?","Can you annihilate dreams?","Can you annihilate shadows?","Can you annihilate thinking?","Can you annihilate the future?","Can you annihilate the past?","Can you annihilate music?","Can you annihilate sound?","Can you annihilate art?","Can you annihilate voice?","Can you annihilate smells?","Can you annihilate motion?","Can you annihilate gravity?","Can you annihilate property?","Can you annihilate knowledge?","Can you annihilate intelligence?","Can you annihilate wisdom?","Can you annihilate friends?","Can you annihilate beauty?","Can you annihilate love?","Can you annihilate happiness?","Can you annihilate education?","Can you annihilate the soul?","Can you annihilate life?","Can you annihilate thoughts?","Can you annihilate sadness?","Can you annihilate truth?","Can you annihilate pain?","Can you annihilate pleasure?","Can you annihilate power?","Can you annihilate silence?","Can you annihilate darkness?","Can you annihilate colour?","Can you annihilate language?","Can you annihilate words?","Can you annihilate death?","Can you annihilate chaos?","Can you annihilate murder?","Can you annihilate insanity?","Can you annihilate humans?","Can you annihilate animals?","Can you annihilate confusion?","Can you annihilate God?","Can you annihilate slavery?","Can you annihilate nature?","Can you annihilate the universe?","Can you annihilate authority?","Can you annihilate the wind?","Can you annihilate existence?","Can you annihilate war?","Can you annihilate peace?",
+"Can you touch time?","Can you touch freedom?","Can you touch my mind?","Can you touch my body?","Can you touch light?","Can you touch reality?","Can you touch dreams?","Can you touch shadows?","Can you touch thinking?","Can you touch the future?","Can you touch the past?","Can you touch music?","Can you touch sound?","Can you touch art?","Can you touch voice?","Can you touch smells?","Can you touch motion?","Can you touch gravity?","Can you touch property?","Can you touch knowledge?","Can you touch intelligence?","Can you touch wisdom?","Can you touch friends?","Can you touch beauty?","Can you touch love?","Can you touch happiness?","Can you touch education?","Can you touch the soul?","Can you touch life?","Can you touch thoughts?","Can you touch sadness?","Can you touch truth?","Can you touch pain?","Can you touch pleasure?","Can you touch power?","Can you touch silence?","Can you touch darkness?","Can you touch colour?","Can you touch language?","Can you touch words?","Can you touch death?","Can you touch chaos?","Can you touch murder?","Can you touch insanity?","Can you touch humans?","Can you touch animals?","Can you touch confusion?","Can you touch God?","Can you touch slavery?","Can you touch nature?","Can you touch the universe?","Can you touch authority?","Can you touch the wind?","Can you touch existence?","Can you touch war?","Can you touch peace?",
+"Can you shrink time?","Can you shrink freedom?","Can you shrink my mind?","Can you shrink my body?","Can you shrink light?","Can you shrink reality?","Can you shrink dreams?","Can you shrink shadows?","Can you shrink thinking?","Can you shrink the future?","Can you shrink the past?","Can you shrink music?","Can you shrink sound?","Can you shrink art?","Can you shrink voice?","Can you shrink smells?","Can you shrink motion?","Can you shrink gravity?","Can you shrink property?","Can you shrink knowledge?","Can you shrink intelligence?","Can you shrink wisdom?","Can you shrink friends?","Can you shrink beauty?","Can you shrink love?","Can you shrink happiness?","Can you shrink education?","Can you shrink the soul?","Can you shrink life?","Can you shrink thoughts?","Can you shrink sadness?","Can you shrink truth?","Can you shrink pain?","Can you shrink pleasure?","Can you shrink power?","Can you shrink silence?","Can you shrink darkness?","Can you shrink colour?","Can you shrink language?","Can you shrink words?","Can you shrink death?","Can you shrink chaos?","Can you shrink murder?","Can you shrink insanity?","Can you shrink humans?","Can you shrink animals?","Can you shrink confusion?","Can you shrink God?","Can you shrink slavery?","Can you shrink nature?","Can you shrink the universe?","Can you shrink authority?","Can you shrink the wind?","Can you shrink existence?","Can you shrink war?","Can you shrink peace?",
+"Can you enlarge time?","Can you enlarge freedom?","Can you enlarge my mind?","Can you enlarge my body?","Can you enlarge light?","Can you enlarge reality?","Can you enlarge dreams?","Can you enlarge shadows?","Can you enlarge thinking?","Can you enlarge the future?","Can you enlarge the past?","Can you enlarge music?","Can you enlarge sound?","Can you enlarge art?","Can you enlarge voice?","Can you enlarge smells?","Can you enlarge motion?","Can you enlarge gravity?","Can you enlarge property?","Can you enlarge knowledge?","Can you enlarge intelligence?","Can you enlarge wisdom?","Can you enlarge friends?","Can you enlarge beauty?","Can you enlarge love?","Can you enlarge happiness?","Can you enlarge education?","Can you enlarge the soul?","Can you enlarge life?","Can you enlarge thoughts?","Can you enlarge sadness?","Can you enlarge truth?","Can you enlarge pain?","Can you enlarge pleasure?","Can you enlarge power?","Can you enlarge silence?","Can you enlarge darkness?","Can you enlarge colour?","Can you enlarge language?","Can you enlarge words?","Can you enlarge death?","Can you enlarge chaos?","Can you enlarge murder?","Can you enlarge insanity?","Can you enlarge humans?","Can you enlarge animals?","Can you enlarge confusion?","Can you enlarge God?","Can you enlarge slavery?","Can you enlarge nature?","Can you enlarge the universe?","Can you enlarge authority?","Can you enlarge the wind?","Can you enlarge existence?","Can you enlarge war?","Can you enlarge peace?",
+"Can you escape time?","Can you escape freedom?","Can you escape my mind?","Can you escape my body?","Can you escape light?","Can you escape reality?","Can you escape dreams?","Can you escape shadows?","Can you escape thinking?","Can you escape the future?","Can you escape the past?","Can you escape music?","Can you escape sound?","Can you escape art?","Can you escape voice?","Can you escape smells?","Can you escape motion?","Can you escape gravity?","Can you escape property?","Can you escape knowledge?","Can you escape intelligence?","Can you escape wisdom?","Can you escape friends?","Can you escape beauty?","Can you escape love?","Can you escape happiness?","Can you escape education?","Can you escape the soul?","Can you escape life?","Can you escape thoughts?","Can you escape sadness?","Can you escape truth?","Can you escape pain?","Can you escape pleasure?","Can you escape power?","Can you escape silence?","Can you escape darkness?","Can you escape colour?","Can you escape language?","Can you escape words?","Can you escape death?","Can you escape chaos?","Can you escape murder?","Can you escape insanity?","Can you escape humans?","Can you escape animals?","Can you escape confusion?","Can you escape God?","Can you escape slavery?","Can you escape nature?","Can you escape the universe?","Can you escape authority?","Can you escape the wind?","Can you escape existence?","Can you escape war?","Can you escape peace?",
+"Can you divide time?","Can you divide freedom?","Can you divide my mind?","Can you divide my body?","Can you divide light?","Can you divide reality?","Can you divide dreams?","Can you divide shadows?","Can you divide thinking?","Can you divide the future?","Can you divide the past?","Can you divide music?","Can you divide sound?","Can you divide art?","Can you divide voice?","Can you divide smells?","Can you divide motion?","Can you divide gravity?","Can you divide property?","Can you divide knowledge?","Can you divide intelligence?","Can you divide wisdom?","Can you divide friends?","Can you divide beauty?","Can you divide love?","Can you divide happiness?","Can you divide education?","Can you divide the soul?","Can you divide life?","Can you divide thoughts?","Can you divide sadness?","Can you divide truth?","Can you divide pain?","Can you divide pleasure?","Can you divide power?","Can you divide silence?","Can you divide darkness?","Can you divide colour?","Can you divide language?","Can you divide words?","Can you divide death?","Can you divide chaos?","Can you divide murder?","Can you divide insanity?","Can you divide humans?","Can you divide animals?","Can you divide confusion?","Can you divide God?","Can you divide slavery?","Can you divide nature?","Can you divide the universe?","Can you divide authority?","Can you divide the wind?","Can you divide existence?","Can you divide war?","Can you divide peace?",
+"Can you break time?","Can you break freedom?","Can you break my mind?","Can you break my body?","Can you break light?","Can you break reality?","Can you break dreams?","Can you break shadows?","Can you break thinking?","Can you break the future?","Can you break the past?","Can you break music?","Can you break sound?","Can you break art?","Can you break voice?","Can you break smells?","Can you break motion?","Can you break gravity?","Can you break property?","Can you break knowledge?","Can you break intelligence?","Can you break wisdom?","Can you break friends?","Can you break beauty?","Can you break love?","Can you break happiness?","Can you break education?","Can you break the soul?","Can you break life?","Can you break thoughts?","Can you break sadness?","Can you break truth?","Can you break pain?","Can you break pleasure?","Can you break power?","Can you break silence?","Can you break darkness?","Can you break colour?","Can you break language?","Can you break words?","Can you break death?","Can you break chaos?","Can you break murder?","Can you break insanity?","Can you break humans?","Can you break animals?","Can you break confusion?","Can you break God?","Can you break slavery?","Can you break nature?","Can you break the universe?","Can you break authority?","Can you break the wind?","Can you break existence?","Can you break war?","Can you break peace?",
+"Can you smell time?","Can you smell freedom?","Can you smell my mind?","Can you smell my body?","Can you smell light?","Can you smell reality?","Can you smell dreams?","Can you smell shadows?","Can you smell thinking?","Can you smell the future?","Can you smell the past?","Can you smell music?","Can you smell sound?","Can you smell art?","Can you smell voice?","Can you smell smells?","Can you smell motion?","Can you smell gravity?","Can you smell property?","Can you smell knowledge?","Can you smell intelligence?","Can you smell wisdom?","Can you smell friends?","Can you smell beauty?","Can you smell love?","Can you smell happiness?","Can you smell education?","Can you smell the soul?","Can you smell life?","Can you smell thoughts?","Can you smell sadness?","Can you smell truth?","Can you smell pain?","Can you smell pleasure?","Can you smell power?","Can you smell silence?","Can you smell darkness?","Can you smell colour?","Can you smell language?","Can you smell words?","Can you smell death?","Can you smell chaos?","Can you smell murder?","Can you smell insanity?","Can you smell humans?","Can you smell animals?","Can you smell confusion?","Can you smell God?","Can you smell slavery?","Can you smell nature?","Can you smell the universe?","Can you smell authority?","Can you smell the wind?","Can you smell existence?","Can you smell war?","Can you smell peace?",
+"Can you feel time?","Can you feel freedom?","Can you feel my mind?","Can you feel my body?","Can you feel light?","Can you feel reality?","Can you feel dreams?","Can you feel shadows?","Can you feel thinking?","Can you feel the future?","Can you feel the past?","Can you feel music?","Can you feel sound?","Can you feel art?","Can you feel voice?","Can you feel smells?","Can you feel motion?","Can you feel gravity?","Can you feel property?","Can you feel knowledge?","Can you feel intelligence?","Can you feel wisdom?","Can you feel friends?","Can you feel beauty?","Can you feel love?","Can you feel happiness?","Can you feel education?","Can you feel the soul?","Can you feel life?","Can you feel thoughts?","Can you feel sadness?","Can you feel truth?","Can you feel pain?","Can you feel pleasure?","Can you feel power?","Can you feel silence?","Can you feel darkness?","Can you feel colour?","Can you feel language?","Can you feel words?","Can you feel death?","Can you feel chaos?","Can you feel murder?","Can you feel insanity?","Can you feel humans?","Can you feel animals?","Can you feel confusion?","Can you feel God?","Can you feel slavery?","Can you feel nature?","Can you feel the universe?","Can you feel authority?","Can you feel the wind?","Can you feel existence?","Can you feel war?","Can you feel peace?",
+"Can you own time?","Can you own freedom?","Can you own my mind?","Can you own my body?","Can you own light?","Can you own reality?","Can you own dreams?","Can you own shadows?","Can you own thinking?","Can you own the future?","Can you own the past?","Can you own music?","Can you own sound?","Can you own art?","Can you own voice?","Can you own smells?","Can you own motion?","Can you own gravity?","Can you own property?","Can you own knowledge?","Can you own intelligence?","Can you own wisdom?","Can you own friends?","Can you own beauty?","Can you own love?","Can you own happiness?","Can you own education?","Can you own the soul?","Can you own life?","Can you own thoughts?","Can you own sadness?","Can you own truth?","Can you own pain?","Can you own pleasure?","Can you own power?","Can you own silence?","Can you own darkness?","Can you own colour?","Can you own language?","Can you own words?","Can you own death?","Can you own chaos?","Can you own murder?","Can you own insanity?","Can you own humans?","Can you own animals?","Can you own confusion?","Can you own God?","Can you own slavery?","Can you own nature?","Can you own the universe?","Can you own authority?","Can you own the wind?","Can you own existence?","Can you own war?","Can you own peace?",
+"Can you possess time?","Can you possess freedom?","Can you possess my mind?","Can you possess my body?","Can you possess light?","Can you possess reality?","Can you possess dreams?","Can you possess shadows?","Can you possess thinking?","Can you possess the future?","Can you possess the past?","Can you possess music?","Can you possess sound?","Can you possess art?","Can you possess voice?","Can you possess smells?","Can you possess motion?","Can you possess gravity?","Can you possess property?","Can you possess knowledge?","Can you possess intelligence?","Can you possess wisdom?","Can you possess friends?","Can you possess beauty?","Can you possess love?","Can you possess happiness?","Can you possess education?","Can you possess the soul?","Can you possess life?","Can you possess thoughts?","Can you possess sadness?","Can you possess truth?","Can you possess pain?","Can you possess pleasure?","Can you possess power?","Can you possess silence?","Can you possess darkness?","Can you possess colour?","Can you possess language?","Can you possess words?","Can you possess death?","Can you possess chaos?","Can you possess murder?","Can you possess insanity?","Can you possess humans?","Can you possess animals?","Can you possess confusion?","Can you possess God?","Can you possess slavery?","Can you possess nature?","Can you possess the universe?","Can you possess authority?","Can you possess the wind?","Can you possess existence?","Can you possess war?","Can you possess peace?",
+"Can you lose time?","Can you lose freedom?","Can you lose my mind?","Can you lose my body?","Can you lose light?","Can you lose reality?","Can you lose dreams?","Can you lose shadows?","Can you lose thinking?","Can you lose the future?","Can you lose the past?","Can you lose music?","Can you lose sound?","Can you lose art?","Can you lose voice?","Can you lose smells?","Can you lose motion?","Can you lose gravity?","Can you lose property?","Can you lose knowledge?","Can you lose intelligence?","Can you lose wisdom?","Can you lose friends?","Can you lose beauty?","Can you lose love?","Can you lose happiness?","Can you lose education?","Can you lose the soul?","Can you lose life?","Can you lose thoughts?","Can you lose sadness?","Can you lose truth?","Can you lose pain?","Can you lose pleasure?","Can you lose power?","Can you lose silence?","Can you lose darkness?","Can you lose colour?","Can you lose language?","Can you lose words?","Can you lose death?","Can you lose chaos?","Can you lose murder?","Can you lose insanity?","Can you lose humans?","Can you lose animals?","Can you lose confusion?","Can you lose God?","Can you lose slavery?","Can you lose nature?","Can you lose the universe?","Can you lose authority?","Can you lose the wind?","Can you lose existence?","Can you lose war?","Can you lose peace?",
+"Can you consume time?","Can you consume freedom?","Can you consume my mind?","Can you consume my body?","Can you consume light?","Can you consume reality?","Can you consume dreams?","Can you consume shadows?","Can you consume thinking?","Can you consume the future?","Can you consume the past?","Can you consume music?","Can you consume sound?","Can you consume art?","Can you consume voice?","Can you consume smells?","Can you consume motion?","Can you consume gravity?","Can you consume property?","Can you consume knowledge?","Can you consume intelligence?","Can you consume wisdom?","Can you consume friends?","Can you consume beauty?","Can you consume love?","Can you consume happiness?","Can you consume education?","Can you consume the soul?","Can you consume life?","Can you consume thoughts?","Can you consume sadness?","Can you consume truth?","Can you consume pain?","Can you consume pleasure?","Can you consume power?","Can you consume silence?","Can you consume darkness?","Can you consume colour?","Can you consume language?","Can you consume words?","Can you consume death?","Can you consume chaos?","Can you consume murder?","Can you consume insanity?","Can you consume humans?","Can you consume animals?","Can you consume confusion?","Can you consume God?","Can you consume slavery?","Can you consume nature?","Can you consume the universe?","Can you consume authority?","Can you consume the wind?","Can you consume existence?","Can you consume war?","Can you consume peace?",
+"Can you freeze time?","Can you freeze freedom?","Can you freeze my mind?","Can you freeze my body?","Can you freeze light?","Can you freeze reality?","Can you freeze dreams?","Can you freeze shadows?","Can you freeze thinking?","Can you freeze the future?","Can you freeze the past?","Can you freeze music?","Can you freeze sound?","Can you freeze art?","Can you freeze voice?","Can you freeze smells?","Can you freeze motion?","Can you freeze gravity?","Can you freeze property?","Can you freeze knowledge?","Can you freeze intelligence?","Can you freeze wisdom?","Can you freeze friends?","Can you freeze beauty?","Can you freeze love?","Can you freeze happiness?","Can you freeze education?","Can you freeze the soul?","Can you freeze life?","Can you freeze thoughts?","Can you freeze sadness?","Can you freeze truth?","Can you freeze pain?","Can you freeze pleasure?","Can you freeze power?","Can you freeze silence?","Can you freeze darkness?","Can you freeze colour?","Can you freeze language?","Can you freeze words?","Can you freeze death?","Can you freeze chaos?","Can you freeze murder?","Can you freeze insanity?","Can you freeze humans?","Can you freeze animals?","Can you freeze confusion?","Can you freeze God?","Can you freeze slavery?","Can you freeze nature?","Can you freeze the universe?","Can you freeze authority?","Can you freeze the wind?","Can you freeze existence?","Can you freeze war?","Can you freeze peace?",
+"Can you sell time?","Can you sell freedom?","Can you sell my mind?","Can you sell my body?","Can you sell light?","Can you sell reality?","Can you sell dreams?","Can you sell shadows?","Can you sell thinking?","Can you sell the future?","Can you sell the past?","Can you sell music?","Can you sell sound?","Can you sell art?","Can you sell voice?","Can you sell smells?","Can you sell motion?","Can you sell gravity?","Can you sell property?","Can you sell knowledge?","Can you sell intelligence?","Can you sell wisdom?","Can you sell friends?","Can you sell beauty?","Can you sell love?","Can you sell happiness?","Can you sell education?","Can you sell the soul?","Can you sell life?","Can you sell thoughts?","Can you sell sadness?","Can you sell truth?","Can you sell pain?","Can you sell pleasure?","Can you sell power?","Can you sell silence?","Can you sell darkness?","Can you sell colour?","Can you sell language?","Can you sell words?","Can you sell death?","Can you sell chaos?","Can you sell murder?","Can you sell insanity?","Can you sell humans?","Can you sell animals?","Can you sell confusion?","Can you sell God?","Can you sell slavery?","Can you sell nature?","Can you sell the universe?","Can you sell authority?","Can you sell the wind?","Can you sell existence?","Can you sell war?","Can you sell peace?",
+"Can you buy time?","Can you buy freedom?","Can you buy my mind?","Can you buy my body?","Can you buy light?","Can you buy reality?","Can you buy dreams?","Can you buy shadows?","Can you buy thinking?","Can you buy the future?","Can you buy the past?","Can you buy music?","Can you buy sound?","Can you buy art?","Can you buy voice?","Can you buy smells?","Can you buy motion?","Can you buy gravity?","Can you buy property?","Can you buy knowledge?","Can you buy intelligence?","Can you buy wisdom?","Can you buy friends?","Can you buy beauty?","Can you buy love?","Can you buy happiness?","Can you buy education?","Can you buy the soul?","Can you buy life?","Can you buy thoughts?","Can you buy sadness?","Can you buy truth?","Can you buy pain?","Can you buy pleasure?","Can you buy power?","Can you buy silence?","Can you buy darkness?","Can you buy colour?","Can you buy language?","Can you buy words?","Can you buy death?","Can you buy chaos?","Can you buy murder?","Can you buy insanity?","Can you buy humans?","Can you buy animals?","Can you buy confusion?","Can you buy God?","Can you buy slavery?","Can you buy nature?","Can you buy the universe?","Can you buy authority?","Can you buy the wind?","Can you buy existence?","Can you buy war?","Can you buy peace?",
+"Can you enslave time?","Can you enslave freedom?","Can you enslave my mind?","Can you enslave my body?","Can you enslave light?","Can you enslave reality?","Can you enslave dreams?","Can you enslave shadows?","Can you enslave thinking?","Can you enslave the future?","Can you enslave the past?","Can you enslave music?","Can you enslave sound?","Can you enslave art?","Can you enslave voice?","Can you enslave smells?","Can you enslave motion?","Can you enslave gravity?","Can you enslave property?","Can you enslave knowledge?","Can you enslave intelligence?","Can you enslave wisdom?","Can you enslave friends?","Can you enslave beauty?","Can you enslave love?","Can you enslave happiness?","Can you enslave education?","Can you enslave the soul?","Can you enslave life?","Can you enslave thoughts?","Can you enslave sadness?","Can you enslave truth?","Can you enslave pain?","Can you enslave pleasure?","Can you enslave power?","Can you enslave silence?","Can you enslave darkness?","Can you enslave colour?","Can you enslave language?","Can you enslave words?","Can you enslave death?","Can you enslave chaos?","Can you enslave murder?","Can you enslave insanity?","Can you enslave humans?","Can you enslave animals?","Can you enslave confusion?","Can you enslave God?","Can you enslave slavery?","Can you enslave nature?","Can you enslave the universe?","Can you enslave authority?","Can you enslave the wind?","Can you enslave existence?","Can you enslave war?","Can you enslave peace?",
+"Can you become time?","Can you become freedom?","Can you become my mind?","Can you become my body?","Can you become light?","Can you become reality?","Can you become dreams?","Can you become shadows?","Can you become thinking?","Can you become the future?","Can you become the past?","Can you become music?","Can you become sound?","Can you become art?","Can you become voice?","Can you become smells?","Can you become motion?","Can you become gravity?","Can you become property?","Can you become knowledge?","Can you become intelligence?","Can you become wisdom?","Can you become friends?","Can you become beauty?","Can you become love?","Can you become happiness?","Can you become education?","Can you become the soul?","Can you become life?","Can you become thoughts?","Can you become sadness?","Can you become truth?","Can you become pain?","Can you become pleasure?","Can you become power?","Can you become silence?","Can you become darkness?","Can you become colour?","Can you become language?","Can you become words?","Can you become death?","Can you become chaos?","Can you become murder?","Can you become insanity?","Can you become humans?","Can you become animals?","Can you become confusion?","Can you become God?","Can you become slavery?","Can you become nature?","Can you become the universe?","Can you become authority?","Can you become the wind?","Can you become existence?","Can you become war?","Can you become peace?",
+"Can you see time?","Can you see freedom?","Can you see my mind?","Can you see my body?","Can you see light?","Can you see reality?","Can you see dreams?","Can you see shadows?","Can you see thinking?","Can you see the future?","Can you see the past?","Can you see music?","Can you see sound?","Can you see art?","Can you see voice?","Can you see smells?","Can you see motion?","Can you see gravity?","Can you see property?","Can you see knowledge?","Can you see intelligence?","Can you see wisdom?","Can you see friends?","Can you see beauty?","Can you see love?","Can you see happiness?","Can you see education?","Can you see the soul?","Can you see life?","Can you see thoughts?","Can you see sadness?","Can you see truth?","Can you see pain?","Can you see pleasure?","Can you see power?","Can you see silence?","Can you see darkness?","Can you see colour?","Can you see language?","Can you see words?","Can you see death?","Can you see chaos?","Can you see murder?","Can you see insanity?","Can you see humans?","Can you see animals?","Can you see confusion?","Can you see God?","Can you see slavery?","Can you see nature?","Can you see the universe?","Can you see authority?","Can you see the wind?","Can you see existence?","Can you see war?","Can you see peace?"
+  ];
+
+  const sentenceEl = document.getElementById('sentence');
+  const hintEl = document.getElementById('hint');
+  const countEl = document.getElementById('count');
+  const stageEl = document.getElementById('stage');
+
+  let lastIdx = -1;
+  let shown = 0;
+
+  function pickIndex(exclude, max) {
+    if (max <= 1) return 0;
+    let i;
+    do { i = Math.floor(Math.random() * max); } while (i === exclude);
+    return i;
+  }
+
+  function next() {
+    const idx = pickIndex(lastIdx, strategies.length);
+    lastIdx = idx;
+    shown++;
+
+    sentenceEl.classList.add('fading');
+
+    setTimeout(() => {
+      sentenceEl.textContent = strategies[idx];
+      countEl.textContent = shown + " / " + strategies.length;
+      sentenceEl.classList.remove('fading');
+    }, 350);
+
+    if (hintEl && !hintEl.classList.contains('hidden')) {
+      hintEl.classList.add('hidden');
+    }
+  }
+
+  (function init() {
+    const idx = pickIndex(-1, strategies.length);
+    lastIdx = idx;
+    shown = 1;
+    sentenceEl.textContent = strategies[idx];
+    countEl.textContent = shown + " / " + strategies.length;
+  })();
+
+  stageEl.addEventListener('click', next);
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      e.preventDefault();
+      next();
+    }
+  });
+</script>
+
+</body>
+</html>
