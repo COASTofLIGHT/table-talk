@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Question Prompts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    background: #F0C2D3;
+    overflow: hidden;
+  }
+
+  .back {
+    position: fixed;
+    top: max(20px, env(safe-area-inset-top, 0px));
+    left: 20px;
+    z-index: 2;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #10303A;
+    opacity: 0.7;
+    text-decoration: none;
+  }
+  .back:hover { opacity: 1; text-decoration: underline; }
+
+  button.stage {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    background: #F0C2D3;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    margin: 0;
+    padding: 8vw 7vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  button.stage:focus {
+    outline: none;
+  }
+
+  .sentence {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size: clamp(28px, 6vw, 68px);
+    line-height: 1.25;
+    color: #10303A;
+    letter-spacing: -0.01em;
+    max-width: 900px;
+    transition: opacity 500ms ease, filter 500ms ease;
+    opacity: 1;
+    filter: blur(0px);
+  }
+
+  .sentence.fading {
+    opacity: 0;
+    filter: blur(6px);
+  }
+
+  .hint {
+    position: fixed;
+    bottom: 28px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #10303A;
+    opacity: 0.45;
+    transition: opacity 1.2s ease;
+    pointer-events: none;
+  }
+
+  .hint.hidden { opacity: 0; }
+
+  .count {
+    position: fixed;
+    top: 28px;
+    right: 32px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #10303A;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<a class="back" href="https://coastoflight.github.io/table-talk/">&larr; Table Talk</a>
+
+<button class="stage" id="stage" aria-label="Show another question">
+  <div class="sentence" id="sentence"></div>
+</button>
+
+<div class="hint" id="hint">tap for another</div>
+<div class="count" id="count"></div>
+
+<script>
+  const strategies = [
+    "What\u2019s stopping you?",
+    "Can you escape?",
+    "Where does it hurt?",
+    "What keeps calling you back?",
+    "What are you looking for?",
+    "What part of your life feels like art?",
+    "What word would you put on a T-shirt that sums you up?",
+    "If today had a title, what would it be?",
+    "What product from your life would you repeat in a Warhol-esque series?",
+    "Who would play you in a shampoo commercial?",
+    "What is the best sandwich?",
+    "What\u2019s the best thing to put ketchup on?",
+    "What would you ban if you were in charge for a day?",
+    "What is the most used app on your phone?",
+    "What places do you carry with you?",
+    "What is your motto?",
+    "When do you lie?",
+    "What would your entrance song be?",
+    "What do you refuse to be quiet about?",
+    "What have you screamed into the dark?",
+    "What do you think happens when we die?",
+    "How would you like to die?",
+    "What\u2019s a song you\u2019d like people to hear at your funeral?",
+    "Describe the rest of your life in 5 words?",
+    "What would you like to come back as?",
+    "Speak or listen?",
+    "Sunrise or sunset?",
+    "Begin or end?",
+    "Light or shadow?",
+    "Lead or follow?",
+    "Open or closed?",
+    "Know or wonder?",
+    "Question or answer?",
+    "Roots or wings?",
+    "Map or instinct?",
+    "Are you more blueprint or collage?",
+    "Can a mistake be beautiful?",
+    "What sound or noise do you love / hate?",
+    "What silence have you grown to love?",
+    "Where were you the first time you felt far from home?",
+    "What rule would you break just to feel free?",
+    "How can we make things better?",
+    "Is failure progress?",
+    "Can fear be useful?",
+    "Should freedom have a limit?",
+    "What\u2019s one of your favourite restaurants?",
+    "What was the last thing you ate?",
+    "What food would you frame as art?",
+    "What flavour do you carry from childhood?",
+    "What would be your last meal?"
+  ];
+
+  const sentenceEl = document.getElementById('sentence');
+  const hintEl = document.getElementById('hint');
+  const countEl = document.getElementById('count');
+  const stageEl = document.getElementById('stage');
+
+  let lastIdx = -1;
+  let shown = 0;
+
+  function pickIndex(exclude, max) {
+    if (max <= 1) return 0;
+    let i;
+    do { i = Math.floor(Math.random() * max); } while (i === exclude);
+    return i;
+  }
+
+  function next() {
+    const idx = pickIndex(lastIdx, strategies.length);
+    lastIdx = idx;
+    shown++;
+
+    sentenceEl.classList.add('fading');
+
+    setTimeout(() => {
+      sentenceEl.textContent = strategies[idx];
+      countEl.textContent = shown + " / " + strategies.length;
+      sentenceEl.classList.remove('fading');
+    }, 350);
+
+    if (hintEl && !hintEl.classList.contains('hidden')) {
+      hintEl.classList.add('hidden');
+    }
+  }
+
+  (function init() {
+    const idx = pickIndex(-1, strategies.length);
+    lastIdx = idx;
+    shown = 1;
+    sentenceEl.textContent = strategies[idx];
+    countEl.textContent = shown + " / " + strategies.length;
+  })();
+
+  stageEl.addEventListener('click', next);
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      e.preventDefault();
+      next();
+    }
+  });
+</script>
+
+</body>
+</html>
