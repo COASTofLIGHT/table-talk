@@ -123,12 +123,53 @@
     "Happiness is\u2026",
     "On Mondays\u2026",
     "In my free time\u2026",
-   "My favourite\u2026",
-   "Yesterday\u2026",
-   "In the future\u2026",
-   "I never\u2026",
-   "I always\u2026",
-   
+    "My favourite\u2026",
+    "Yesterday\u2026",
+    "In the future\u2026",
+    "I never\u2026",
+    "I always\u2026",
+    "One place I would love to visit is\u2026",
+    "My favourite meal to cook is\u2026",
+    "A hobby I enjoy is\u2026",
+    "My dream job is\u2026",
+    "My favourite type of weather is\u2026",
+    "If I could study any subject, it would be\u2026",
+    "The best part of my day is\u2026",
+    "An interesting fact about my hometown is\u2026",
+    "My favourite social media platform is\u2026",
+    "The most useful technology for me is\u2026",
+    "If I could start a YouTube channel, it would be about\u2026",
+    "A new skill I want to learn this year is\u2026",
+    "A language I would love to learn is\u2026",
+    "An outdoor activity I enjoy is\u2026",
+    "The best gift I've ever received was\u2026",
+    "My best friend is\u2026",
+    "On weekends, I usually\u2026",
+    "My favourite film is\u2026",
+    "The last book I read was\u2026",
+    "My favourite season is\u2026",
+    "I'm afraid of\u2026",
+    "My family is\u2026",
+    "I feel happy when\u2026",
+    "My favourite sport is\u2026",
+    "The last time I laughed a lot was\u2026",
+    "If I had more time, I would\u2026",
+    "My favourite animal is\u2026",
+    "I usually eat breakfast at\u2026",
+    "My favourite colour is\u2026",
+    "At school, I'm good at\u2026",
+    "My favourite song right now is\u2026",
+    "I get nervous when\u2026",
+    "My perfect weekend would be\u2026",
+    "The last holiday I went on was\u2026",
+    "I would love to meet\u2026",
+    "My favourite time of day is\u2026",
+    "I feel proud when\u2026",
+    "If I won the lottery, I would\u2026",
+    "My favourite app is\u2026",
+    "The best advice I've ever received is\u2026",
+    "I relax by\u2026",
+    "My favourite place at home is\u2026"
   ];
 
   const sentenceEl = document.getElementById('sentence');
@@ -136,25 +177,30 @@
   const countEl = document.getElementById('count');
   const stageEl = document.getElementById('stage');
 
-  let lastIdx = -1;
-  let shown = 0;
-
-  function pickIndex(exclude, max) {
-    if (max <= 1) return 0;
-    let i;
-    do { i = Math.floor(Math.random() * max); } while (i === exclude);
-    return i;
+  function shuffle(list) {
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    return list;
   }
 
+  /* Draws from a shuffled deck so every sentence is used once before any repeat. */
+  let deck = [];
+  let current = null;
+  let shown = 0;
+
   function next() {
-    const idx = pickIndex(lastIdx, sentences.length);
-    lastIdx = idx;
+    if (!deck.length) deck = shuffle(sentences.slice());
+    let s = deck.pop();
+    if (s === current && deck.length) s = deck.pop();
+    current = s;
     shown++;
 
     sentenceEl.classList.add('fading');
 
     setTimeout(() => {
-      sentenceEl.textContent = sentences[idx];
+      sentenceEl.textContent = s;
       countEl.textContent = shown + " / " + sentences.length;
       sentenceEl.classList.remove('fading');
     }, 350);
@@ -165,10 +211,10 @@
   }
 
   (function init() {
-    const idx = pickIndex(-1, sentences.length);
-    lastIdx = idx;
+    deck = shuffle(sentences.slice());
+    current = deck.pop();
     shown = 1;
-    sentenceEl.textContent = sentences[idx];
+    sentenceEl.textContent = current;
     countEl.textContent = shown + " / " + sentences.length;
   })();
 
